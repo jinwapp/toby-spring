@@ -25,7 +25,8 @@ public class HellobootApplication {
 
 		// 스프링 컨테이너 생성 applicationContext
 		GenericApplicationContext applicationContext = new GenericApplicationContext();
-		applicationContext.registerBean(HelloController.class);
+		applicationContext.registerBean(HelloController.class); // 빈 등록
+		applicationContext.registerBean(SimpleHelloService.class); // 빈 등록
 		applicationContext.refresh(); // 빈 생성
 
 
