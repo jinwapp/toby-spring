@@ -6,6 +6,7 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,20 @@ import java.io.IOException;
 public class HellobootApplication {
 
 	public static void main(String[] args) {
+
+		// 스프링 컨테이너 생성 applicationContext
+		GenericApplicationContext applicationContext = new GenericApplicationContext();
+		applicationContext.registerBean(HelloController.class);
+		applicationContext.refresh(); // 빈 생성
+
+
+
+
 		/**
 		 * 서블릿 컨테이너 띄우기
 		 */
 		ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
 		WebServer webserver = serverFactory.getWebServer(servletContext -> {
-			HelloController helloController = new HelloController();
 
 			servletContext.addServlet("frontcontroller", new HttpServlet() { // 서블릿 등록
 				@Override
@@ -35,14 +44,12 @@ public class HellobootApplication {
 					if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())){ //매핑
 						String name = req.getParameter("name");
 
+						HelloController helloController = applicationContext.getBean(HelloController.class);
 						String ret = helloController.hello(name);
 
-						resp.setStatus(HttpStatus.OK.value()); // 서블릿 응답 : 상태
-						resp.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE); // 서블릿 응답 : 헤더
+						resp.setContentType(MediaType.TEXT_PLAIN_VALUE);
 						resp.getWriter().println(ret); // 서블릿 응답 : 바디
-					} else if (req.getRequestURI().equals("/user")) {
-						//
-					} else {
+					}  else {
 						resp.setStatus(HttpStatus.NOT_FOUND.value());
 					}
 				}
