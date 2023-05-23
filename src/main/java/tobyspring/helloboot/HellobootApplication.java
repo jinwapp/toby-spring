@@ -1,30 +1,17 @@
 package tobyspring.helloboot;
 
 
-import org.apache.catalina.startup.Tomcat;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import static org.springframework.boot.SpringApplication.run;
 
 @Configuration
 @ComponentScan
@@ -40,28 +27,7 @@ public class HellobootApplication {
 	}
 
 	public static void main(String[] args) {
-		// 스프링 컨테이너 생성 applicationContext
-		AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext(){
-			@Override
-			protected void onRefresh() {
-				super.onRefresh();
-
-				/**
-				 * 서블릿 컨테이너 생성 => 서블릿 등록
-				 */
-				ServletWebServerFactory serverFactory = this.getBean(ServletWebServerFactory.class);
-				DispatcherServlet dispatcherServlet = this.getBean(DispatcherServlet.class);
-				dispatcherServlet.setApplicationContext(this);
-
-				WebServer webserver = serverFactory.getWebServer(servletContext -> {
-					servletContext.addServlet("dispatcherServlet",dispatcherServlet) // 스프링을 위한 서블릿 : DispactcherServlet
-					.addMapping("/*"); // front controller
-				});
-				webserver.start();
-			}
-		}; // 스프링 컨테이너 : applicationContext
-		applicationContext.register(HellobootApplication.class); // 빈 등록
-		applicationContext.refresh(); // 빈 생성
+		SpringApplication.run(HellobootApplication.class, args);
 	}
 }
 /**
