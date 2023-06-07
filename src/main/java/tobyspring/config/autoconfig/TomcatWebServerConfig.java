@@ -19,3 +19,33 @@ public class TomcatWebServerConfig {
         return new TomcatServletWebServerFactory();
     }
 }
+
+/**
+ * @MyAutoConfiguration
+ * @ConditionalMyOnClass("org.apache.catalina.startup.Tomcat")
+ * public class TomcatWebServerConfig {
+ *     @Bean("tomcatWebserverFactory")
+ *     public ServletWebServerFactory servletWebServerFactory() { // 팩토리 메서드
+ *         return new TomcatServletWebServerFactory();
+ *     }
+ * }
+ *
+ * @Retention(RetentionPolicy.RUNTIME)
+ * @Target({ElementType.TYPE, ElementType.METHOD})
+ * @Conditional(MyOnClassCondition.class)
+ * public @interface ConditionalMyOnClass {
+ *     String value();
+ * }
+ *
+ * public class MyOnClassCondition implements Condition {
+ *     @Override
+ *     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+ *         Map<String, Object> attrs = metadata.getAnnotationAttributes(ConditionalMyOnClass.class.getName());
+ *         String value = (String) attrs.get("value");
+ *         return ClassUtils.isPresent(value, context.getClassLoader());
+ *     }
+ * }
+ *
+ *
+ *
+ */
